@@ -4,6 +4,7 @@
 /dist
 /tmp
 /out-tsc
+/public
 # Only exists if Bazel was run
 /bazel-out
 
@@ -44,3 +45,12 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# firebase Files
+/.firebase
+.firebaserc
+firebase.json
+
+# 사용자 추가 파일
+
+
