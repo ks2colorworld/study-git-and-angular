@@ -54,3 +54,4 @@ firebase.json
 # 사용자 추가 파일
 .vscode/launch.json
 .vscode/tasks.json
+.angulardoc.json
