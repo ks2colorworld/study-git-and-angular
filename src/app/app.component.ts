@@ -7,7 +7,8 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  //title = 'angular-project-management-with-github';
-  addTitle = environment.detailMessage? ' with detail message':'!';
+  // title = 'angular-project-management-with-github';
+  addTitle = environment.detailMessage? ' with detail message' : '!';
+  _testVar = '';
   title = environment.server_url.toString() + this.addTitle ;
 }

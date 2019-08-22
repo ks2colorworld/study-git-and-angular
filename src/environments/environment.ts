@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   detailMessage: false,
-  server_url: "test-server"
+  server_url: 'test-server'
 };
 
 /*
