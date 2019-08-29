@@ -1,7 +1,7 @@
 import { environment } from './../../environments/environment';
 import { Hero } from './../hero';
 import { Component, OnInit } from '@angular/core';
-import { HEROES } from "../mock-heroes";
+import { HeroService } from "../hero.service";
 
 @Component({
   selector: 'app-heroes',
@@ -10,26 +10,23 @@ import { HEROES } from "../mock-heroes";
 })
 export class HeroesComponent implements OnInit {
 
-  heroes = HEROES;
-  hero: Hero = {
-    id:1,
-    name:'Windstorm',
+  heroes: Hero[];
+  getHeroes(): void{
+    this.heroes = this.heroService.getHeroes();
   }
 
   selectedHero:Hero;
   onSelect(hero: Hero): void{
-    /* environment 사용 확인 : import { environment } from './../../environments/environment';
-    console.log('environment.detailMessage : ' + environment.detailMessage);
-    console.log('environment.production : ' + environment.production);
-    console.log('environment.server_url : ' + environment.server_url);
-    //*/
     if(environment.detailMessage) console.log(hero);
     this.selectedHero = hero;
   }
 
-  constructor() { }
+  constructor(
+    private heroService: HeroService,
+  ) { }
 
   ngOnInit() {
+    this.getHeroes();
   }
 
 }
