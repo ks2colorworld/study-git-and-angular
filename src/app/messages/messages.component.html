@@ -1,0 +1,12 @@
+<!-- 의존성으로 주입된 messageService를 직접 바인딩함.(public 선언함.) -->
+<div *ngIf="messageService.messages.length">
+  <h2>Messages</h2>
+  <button class="clear"
+    (click)="messageService.clear()"
+    >
+    clear
+  </button>
+  <div *ngFor="let message of messageService.messages">
+    {{message}}
+  </div>
+</div>
