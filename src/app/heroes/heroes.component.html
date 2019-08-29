@@ -4,3 +4,8 @@
   <span>name: </span>
   <input [(ngModel)]="hero.name" placeholder="name"/>
 </div>
+<div>
+  <label>name:
+    <input [value]="hero.name" (input)="hero.name=$event.target.value"/>
+  </label>
+</div>
