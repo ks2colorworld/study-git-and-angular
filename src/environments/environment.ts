@@ -1,11 +1,13 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
+import { environment as env } from "./environment.detail";
 
 export const environment = {
-  production: false,
+  production: env.production, //default : false
   detailMessage: false,
-  server_url: '', //db가 준비되어 있지 않으면 in memory DB service를 사용하여 작업한다.
+  server_url: env.server_url,
+  apiUrls: env.apiUrls,
 };
 
 /*
