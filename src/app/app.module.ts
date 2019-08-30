@@ -1,6 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from "@angular/forms";
+import { HttpClientModule } from "@angular/common/http";
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -10,6 +11,11 @@ import { MessagesComponent } from './messages/messages.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { HeroDetailForRouterComponent } from './hero-detail-for-router/hero-detail-for-router.component';
 
+//* TODO : 실서버가 준비되면 이 부분 제거한다.
+import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
+import { InMemoryDataService } from './in-memory-data.service';
+//*/
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -17,14 +23,24 @@ import { HeroDetailForRouterComponent } from './hero-detail-for-router/hero-deta
     HeroDetailComponent,
     MessagesComponent,
     DashboardComponent,
-    HeroDetailForRouterComponent
+    HeroDetailForRouterComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     FormsModule,
+    HttpClientModule,
+    //* TODO : 실서버가 준비되면 이 부분 제거한다.
+    HttpClientInMemoryWebApiModule.forRoot(
+      InMemoryDataService, {dataEncapsulation: false}
+    ),
+    //*/
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [
+
+  ],
+  bootstrap: [
+    AppComponent,
+  ]
 })
 export class AppModule { }
