@@ -4,5 +4,9 @@ export const environment = {
   server_url: '',
   apiUrls: [
     { key: 'heroes', value: 'api/heroes1' },
+    { key: 'addHero', value: 'api/heroes1' },
+    { key: 'deleteHero', value: 'api/heroes1' },
+    { key: 'updateHero', value: 'api/heroes1' },
+
   ]
 };
