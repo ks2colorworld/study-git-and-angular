@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Hero } from "./hero";
-import { HEROES } from "./mock-heroes";
 import { Observable, of } from "rxjs";
 import { delay, catchError, map, tap } from "rxjs/operators";
 import { MessageService } from "./message.service";
 import { environment as env } from "../environments/environment";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
+
+const httpOptions = {
+  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+};
 
 @Injectable({
   providedIn: 'root'
@@ -22,11 +25,12 @@ export class HeroService {
   // 실전 코드로 아래 리펙토링 >> private heroesUrl = 'api/heroes2'; // 웹 API 형식의 URL로 사용
   private heroesUrl(key:string): string{
     const apiUrl = env.apiUrls.find(u => u.key === key);
-    if(env.detailMessage)
+    if(env.detailMessage){
+    console.log('apiUrl key : ' + key );
     console.log(apiUrl);
+    }
     return apiUrl? apiUrl.value : 'api/error';
   }
-
 
   getHeroes(): Observable<Hero[]> {
     return this.http.get<Hero[]>(this.heroesUrl('heroes'))
@@ -43,6 +47,40 @@ export class HeroService {
         tap(_ => this.log(`fetched hero id=${id}`)),
         catchError(this.handleError<Hero>(`getHero id=${id}`))
       );
+  }
+
+  /* 상단코드
+  const httpOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  };
+   */
+  addHero(hero: Hero): Observable<Hero>{
+    if(env.detailMessage)
+    console.log(hero);
+    return this.http.post<Hero>(this.heroesUrl('addHero'), hero, httpOptions)
+      .pipe(
+        tap((newHero: Hero) => this.log(`added hero w/ id=${newHero.id}`)),
+        catchError(this.handleError<Hero>('addHero'))
+      )
+  }
+
+  updateHero(hero: Hero): Observable<any> {
+    return this.http.put(this.heroesUrl('updateHero'), hero, httpOptions)
+      .pipe(
+        tap(_ => this.log(`updated hero id=${hero.id}`)),
+        catchError(this.handleError<any>('updateHero'))
+      );
+  }
+
+  deleteHero(hero:Hero | number): Observable<Hero>{
+    const id = typeof hero === 'number' ? hero: hero.id; //타입 확인방법
+    const url = `${this.heroesUrl('deleteHero')}/${id}`;
+
+    return this.http.delete<Hero>(url, httpOptions)
+      .pipe(
+        tap(_ => this.log(`deleted hero id=${id}`)),
+        catchError(this.handleError<Hero>('deleteHero'))
+      )
   }
 
   /**

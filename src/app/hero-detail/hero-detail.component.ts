@@ -1,3 +1,5 @@
+import { MessageService } from './../message.service';
+import { HeroService } from './../hero.service';
 import { Component, OnInit, Input } from '@angular/core';
 import { Hero } from "../hero";
 
@@ -10,7 +12,18 @@ export class HeroDetailComponent implements OnInit {
 
   @Input() hero:Hero; //활용예시 : <app-hero-detail [hero]="selectedHero"></app-hero-detail>
 
-  constructor() { }
+  updateHero(hero: Hero):void{
+    hero.name = hero.name.trim();
+    if(!hero.name){return;}
+    this.heroService.updateHero(hero)
+      .subscribe(
+        _ => this.messageService.add(`updated hero ${hero.id} - ${hero.name}`)
+      );
+  }
+  constructor(
+    private heroService: HeroService,
+    private messageService: MessageService,
+  ) { }
 
   ngOnInit() {
   }
