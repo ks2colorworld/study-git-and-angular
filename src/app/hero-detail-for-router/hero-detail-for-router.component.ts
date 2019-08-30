@@ -21,16 +21,16 @@ export class HeroDetailForRouterComponent implements OnInit {
       );
   }
   afterGetHero(hero:Hero):void{
+    this.hero = hero;
     if(environment.detailMessage)
     console.log(this.hero);
-    this.hero = hero;
 
   }
 
   constructor(
     private route: ActivatedRoute,
     private heroService: HeroService,
-    private location: Location,
+    public location: Location, //template에서 사용하기 위해서 public으로 수정함.
   ) { }
 
   ngOnInit() {
