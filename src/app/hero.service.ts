@@ -2,33 +2,70 @@ import { Injectable } from '@angular/core';
 import { Hero } from "./hero";
 import { HEROES } from "./mock-heroes";
 import { Observable, of } from "rxjs";
-import { delay } from "rxjs/operators";
+import { delay, catchError, map, tap } from "rxjs/operators";
 import { MessageService } from "./message.service";
 import { environment } from "../environments/environment";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 
 @Injectable({
   providedIn: 'root'
 })
 export class HeroService {
 
-  getHeroes(): Observable<Hero[]>{
-    if(environment.detailMessage)
-    this.messageService.add('HeroService: fetched heroes');
-    return of(HEROES).pipe(
-      delay(800) // 0.8초 - 데이터 로딩이 늦는 경우를 강제 구현해 봄.
-    );
-  }
-  getHero(id: number): Observable<Hero> {
-    if(environment.detailMessage)
-    this.messageService.add(`HeroService: fetched hero id=${id}`);
-    return of(HEROES.find(
-      hero => hero.id === id)
-      ).pipe(
-        delay(800) // 0.8초 - 데이터 로딩 중인 척
+  // 참고 : 서버에 요청할 heroesUrl을 :base/:collectionName과 같이 정의
+  // 이 문자열에서 base는 요청으로 보내는 주소의 기본 위치를 의미
+  // collectionName은 in-memory-data.service.ts에 있는 히어로 데이터가 저장되는 위치
+  // collectionName > createDb()에서 반환하는 개체이름과 동일
+  // createDb()에서 return {a,b,c, ...} 으로 여러개를 반환할 수 있다.
+  // :base 이름은 in-memory-data.service를 사용할 때는 의미 없음.(api)
+  // createDb() >> return {heroes, heroes2}
+  private heroesUrl = 'api/heroes2'; // 웹 API 형식의 URL로 사용
+
+  getHeroes(): Observable<Hero[]> {
+    return this.http.get<Hero[]>(this.heroesUrl)
+      .pipe(
+        tap(_ => this.log('fetched heroes')),
+        catchError(this.handleError<Hero[]>('getHeroes', []))
       );
+  }
+
+  getHero(id: number): Observable<Hero> {
+    const url = `${this.heroesUrl}/${id}`;
+    return this.http.get<Hero>(url)
+      .pipe(
+        tap(_ => this.log(`fetched hero id=${id}`)),
+        catchError(this.handleError<Hero>(`getHero id=${id}`))
+      );
+  }
+
+  private log(message: string) {
+    if (environment.detailMessage)
+      this.messageService.add(`HeroService: ${message}`);
+  }
+
+  /**
+   * HTTP 요청이 실패한 경우를 처리합니다.
+   * 애플리케이션 로직 흐름은 그대로 유지됩니다.
+   * @param operation - 실패한 동작의 이름
+   * @param result - 기본값으로 반환할 객체
+   */
+  private handleError<T>(operation = 'operation', result?: T) {
+    return (error: any): Observable<T> => {
+
+      // TODO: 리모트 서버로 에러 메시지 보내기
+      if(environment.detailMessage)
+      console.error(error); // 지금은 콘솔에 로그를 출력합니다.
+
+      // TODO: 사용자가 이해할 수 있는 형태로 변환하기
+      this.log(`${operation} failed: ${error.message}`);
+
+      // 애플리케이션 로직이 끊기지 않도록 기본값으로 받은 객체를 반환합니다.
+      return of(result as T);
+    };
   }
 
   constructor(
     private messageService: MessageService,
+    private http: HttpClient,
   ) { }
 }
