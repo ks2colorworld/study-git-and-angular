@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 export class InMemoryDataService implements InMemoryDbService {
 
   createDb(){
-    const heroes = [
+    const heroes1 = [
       {id:11, name: 'Dr Nice'},
       { id: 12, name: 'Narco' },
       { id: 13, name: 'Bombasto' },
@@ -33,7 +33,7 @@ export class InMemoryDataService implements InMemoryDbService {
       { id: 120, name: 'new Tornado' },
     ];
 
-    return {heroes, heroes2};
+    return {heroes1, heroes2};
   }
 
   genId(heroes: Hero[]): number{

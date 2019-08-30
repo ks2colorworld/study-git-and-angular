@@ -4,7 +4,7 @@ import { HEROES } from "./mock-heroes";
 import { Observable, of } from "rxjs";
 import { delay, catchError, map, tap } from "rxjs/operators";
 import { MessageService } from "./message.service";
-import { environment } from "../environments/environment";
+import { environment as env } from "../environments/environment";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 
 @Injectable({
@@ -19,10 +19,17 @@ export class HeroService {
   // createDb()에서 return {a,b,c, ...} 으로 여러개를 반환할 수 있다.
   // :base 이름은 in-memory-data.service를 사용할 때는 의미 없음.(api)
   // createDb() >> return {heroes, heroes2}
-  private heroesUrl = 'api/heroes2'; // 웹 API 형식의 URL로 사용
+  // 실전 코드로 아래 리펙토링 >> private heroesUrl = 'api/heroes2'; // 웹 API 형식의 URL로 사용
+  private heroesUrl(key:string): string{
+    const apiUrl = env.apiUrls.find(u => u.key === key);
+    if(env.detailMessage)
+    console.log(apiUrl);
+    return apiUrl? apiUrl.value : 'api/error';
+  }
+
 
   getHeroes(): Observable<Hero[]> {
-    return this.http.get<Hero[]>(this.heroesUrl)
+    return this.http.get<Hero[]>(this.heroesUrl('heroes'))
       .pipe(
         tap(_ => this.log('fetched heroes')),
         catchError(this.handleError<Hero[]>('getHeroes', []))
@@ -30,17 +37,12 @@ export class HeroService {
   }
 
   getHero(id: number): Observable<Hero> {
-    const url = `${this.heroesUrl}/${id}`;
+    const url = `${this.heroesUrl('heroes')}/${id}`;
     return this.http.get<Hero>(url)
       .pipe(
         tap(_ => this.log(`fetched hero id=${id}`)),
         catchError(this.handleError<Hero>(`getHero id=${id}`))
       );
-  }
-
-  private log(message: string) {
-    if (environment.detailMessage)
-      this.messageService.add(`HeroService: ${message}`);
   }
 
   /**
@@ -53,7 +55,7 @@ export class HeroService {
     return (error: any): Observable<T> => {
 
       // TODO: 리모트 서버로 에러 메시지 보내기
-      if(environment.detailMessage)
+      if(env.detailMessage)
       console.error(error); // 지금은 콘솔에 로그를 출력합니다.
 
       // TODO: 사용자가 이해할 수 있는 형태로 변환하기
@@ -62,6 +64,11 @@ export class HeroService {
       // 애플리케이션 로직이 끊기지 않도록 기본값으로 받은 객체를 반환합니다.
       return of(result as T);
     };
+  }
+
+  private log(message: string) {
+    if (env.detailMessage)
+      this.messageService.add(`HeroService: ${message}`);
   }
 
   constructor(
