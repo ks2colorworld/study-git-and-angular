@@ -43,10 +43,13 @@ export class HeroesComponent implements OnInit {
   }
 
   delete(hero: Hero): void{
-    this.heroes = this.heroes.filter(h => h != hero);
     this.heroService.deleteHero(hero)
       .subscribe(
-        _ => this.ms.add(`deleted hero ${hero.id} - ${hero.name}`)
+        _ => {
+          //this.heroes = this.heroes.filter(h => h != hero); // 새 데이터 확인 못함.
+          this.getHeroes(); // 새 데이터 확인해야 함.
+          this.ms.add(`deleted hero ${hero.id} - ${hero.name}`)
+        }
       );
   }
 
