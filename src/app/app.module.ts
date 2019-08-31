@@ -14,6 +14,7 @@ import { HeroDetailForRouterComponent } from './hero-detail-for-router/hero-deta
 //* TODO : 실서버가 준비되면 이 부분 제거한다.
 import { HttpClientInMemoryWebApiModule } from 'angular-in-memory-web-api';
 import { InMemoryDataService } from './in-memory-data.service';
+import { HeroSearchComponent } from './hero-search/hero-search.component';
 //*/
 
 @NgModule({
@@ -24,6 +25,7 @@ import { InMemoryDataService } from './in-memory-data.service';
     MessagesComponent,
     DashboardComponent,
     HeroDetailForRouterComponent,
+    HeroSearchComponent,
   ],
   imports: [
     BrowserModule,
