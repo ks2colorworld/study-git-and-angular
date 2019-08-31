@@ -83,6 +83,19 @@ export class HeroService {
       )
   }
 
+  searchHeroes(term: string): Observable<Hero[]>{
+    if (!term.trim()) {
+      // 빈 배열 반환.
+      return of([]);
+    }
+
+    return this.http.get<Hero[]>(`${this.heroesUrl('searchHeroName')}/?name=${term}`)
+      .pipe(
+        tap(_ => this.log(`found heroes matching "${term}"`)),
+        catchError(this.handleError<Hero[]>('searchHeroes', []))
+      );
+  }
+
   /**
    * HTTP 요청이 실패한 경우를 처리합니다.
    * 애플리케이션 로직 흐름은 그대로 유지됩니다.
