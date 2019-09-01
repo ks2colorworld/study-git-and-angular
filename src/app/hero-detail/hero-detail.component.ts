@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { MessageService } from './../message.service';
 import { HeroService } from './../hero.service';
 import { Component, OnInit, Input } from '@angular/core';
@@ -20,9 +21,21 @@ export class HeroDetailComponent implements OnInit {
         _ => this.messageService.add(`updated hero ${hero.id} - ${hero.name}`)
       );
   }
+
+  deleteHero(hero: Hero):void{
+    if(!hero.id){return;}
+    this.heroService.deleteHero(hero)
+      .subscribe(
+        _ => {
+          this.messageService.add(`deleted hero ${hero.id} - ${hero.name}`);
+          this.location.back();
+        }
+      )
+  }
   constructor(
     private heroService: HeroService,
     private messageService: MessageService,
+    private location: Location,
   ) { }
 
   ngOnInit() {
