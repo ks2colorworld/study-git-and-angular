@@ -54,7 +54,7 @@ export class HeroService {
       );
   }
 
-  /** GET: id에 해당하는 히어로 데이터를 가져옵니다. 존재하지 않으면 `undefined`를 반환합니다. */
+  /** GET: id에 해당하는 히어로 데이터를 가져옵니다. 존재하지 않으면 `undefined`를 반환합니다. <Data> : 어떤 역활?? */
   getHeroNo404<Data>(id: number): Observable<Hero> {
     const url = `${this.heroesUrl("heroes")}/?id=${id}`;
     return this.http.get<Hero[]>(url)
