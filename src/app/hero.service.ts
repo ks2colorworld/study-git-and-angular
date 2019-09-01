@@ -40,11 +40,30 @@ export class HeroService {
       );
   }
 
-  getHero(id: number): Observable<Hero> {
+   /** GET: id에 해당하는 히어로 데이터 가져오기. 존재하지 않으면 404를 반환합니다. */
+  getHero(id: number, No404?: boolean): Observable<Hero> {
+    if(No404){
+      return this.getHeroNo404(id);
+    }
+
     const url = `${this.heroesUrl('heroes')}/${id}`;
     return this.http.get<Hero>(url)
       .pipe(
         tap(_ => this.log(`fetched hero id=${id}`)),
+        catchError(this.handleError<Hero>(`getHero id=${id}`))
+      );
+  }
+
+  /** GET: id에 해당하는 히어로 데이터를 가져옵니다. 존재하지 않으면 `undefined`를 반환합니다. */
+  getHeroNo404<Data>(id: number): Observable<Hero> {
+    const url = `${this.heroesUrl("heroes")}/?id=${id}`;
+    return this.http.get<Hero[]>(url)
+      .pipe(
+        map(heroes => heroes[0]), //배열에 있는 항목 중 하나만 반환함.
+        tap(h => {
+          const outcome = h ? `fetched`:`did not find`;
+          this.log(`${outcome} hero id=${id}`);
+        }),
         catchError(this.handleError<Hero>(`getHero id=${id}`))
       );
   }
@@ -64,6 +83,7 @@ export class HeroService {
       )
   }
 
+  /** PUT: 서버에 저장된 히어로 데이터를 변경합니다. */
   updateHero(hero: Hero): Observable<any> {
     return this.http.put(this.heroesUrl('updateHero'), hero, httpOptions)
       .pipe(
@@ -72,6 +92,11 @@ export class HeroService {
       );
   }
 
+  /**
+    제거할 히어로의 id는 URL을 구성할 때 사용됩니다.
+    put이나 post을 사용했을 때와는 다르게, 추가 데이터는 보내지 않습니다.
+    httpOptions는 동일한 방식으로 사용합니다.
+   */
   deleteHero(hero:Hero | number): Observable<Hero>{
     const id = typeof hero === 'number' ? hero: hero.id; //타입 확인방법
     const url = `${this.heroesUrl('deleteHero')}/${id}`;
