@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Hero } from "./hero";
 import { Observable, of } from "rxjs";
-import { delay, catchError, map, tap } from "rxjs/operators";
+import { delay, catchError, map, tap, filter } from "rxjs/operators";
 import { MessageService } from "./message.service";
 import { environment as env } from "../environments/environment";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
@@ -35,6 +35,12 @@ export class HeroService {
   getHeroes(): Observable<Hero[]> {
     return this.http.get<Hero[]>(this.heroesUrl('heroes'))
       .pipe(
+        //* api로 넘어온 데이터를 조작 후 리턴하는 샘플 작성
+        map(heroes => {
+          heroes.push({id:100, name:'ks lee'});
+          return heroes;
+        }),
+        //*/
         tap(_ => this.log('fetched heroes')),
         catchError(this.handleError<Hero[]>('getHeroes', []))
       );
@@ -43,7 +49,16 @@ export class HeroService {
    /** GET: id에 해당하는 히어로 데이터 가져오기. 존재하지 않으면 404를 반환합니다. */
   getHero(id: number, No404?: boolean): Observable<Hero> {
     if(No404){
-      return this.getHeroNo404(id);
+      return this.getHeroNo404<Hero>(id).pipe(
+        //* 404 혹은 undefined 반환 대신 다르게 반환하는 예시 작성해 봄.
+        map(hero => {
+          if(hero) {return hero;}
+          const NoHero: Hero=new Hero;
+          NoHero.id = 404; NoHero.name = 'unknown';
+          return NoHero;
+        }),
+        //*/
+      );
     }
 
     const url = `${this.heroesUrl('heroes')}/${id}`;
