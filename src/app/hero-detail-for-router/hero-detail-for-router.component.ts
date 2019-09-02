@@ -13,20 +13,35 @@ import { environment } from 'src/environments/environment';
 export class HeroDetailForRouterComponent implements OnInit {
 
   hero:Hero;
-  getHero():void{
+  getHero(isObservale?: boolean):void{
     const id = +this.route.snapshot.paramMap.get('id');
+
+    if(isObservale){
     this.heroService.getHero(id,true) // .gethero(id) // .getHero(id, true) // .getHeroNo404(id) //
       .subscribe(
-        hero => this.afterGetHero(hero)// this.hero = hero
+        hero => {//this.afterGetHero(hero)// this.hero = hero
+          this.hero = hero;
+          if(environment.detailMessage)
+          console.log(this.hero);
+        }
       );
+      return;
+    }
+
+    //promise 테스트 코드
+    this.heroService.getHeroForPromise(id)
+      .then(hero => {
+        this.hero = this.heroService.getHeroForPromiseThen(hero);
+      });
   }
 
+  /* 사용안함.
   afterGetHero(hero:Hero):void{
     this.hero = hero;
     if(environment.detailMessage)
     console.log(this.hero);
-
   }
+  //*/
 
   constructor(
     private route: ActivatedRoute,

@@ -46,6 +46,19 @@ export class HeroService {
       );
   }
 
+  /** Promise 테스트 코드, 존재하지 않으면 404 반환함.*/
+  getHeroForPromise(id:number): Promise<Hero>{
+    const url = `${this.heroesUrl('heroes')}/${id}`;
+    return this.http.get(url,{})
+      .toPromise()
+      .then();
+  }
+
+  getHeroForPromiseThen(hero:Hero): Hero {
+    hero.name += " for promise then";
+    return hero;
+  }
+
    /** GET: id에 해당하는 히어로 데이터 가져오기. 존재하지 않으면 404를 반환합니다. */
   getHero(id: number, No404?: boolean): Observable<Hero> {
     if(No404){
