@@ -54,11 +54,24 @@ export class HeroesComponent implements OnInit {
   }
 
   heroes: Hero[];
-  getHeroes(): void{
+  getHeroes(observable?: boolean): void{
+    if(observable){
     this.heroService.getHeroes()
       .subscribe(
         heroes => this.heroes = heroes
       );
+      return;
+    }
+
+    //* service 에서 데이터 조작할 경우(기본)
+    this.heroService.getHeroesForPromise()
+      .then(heroes => this.heroes = heroes);
+    //*/
+
+    /* component 에서 데이터 조작할 경우
+    this.heroService.getHeroesForPromise()
+      .then(heroes => this.heroes = this.heroService.getHeroesForPromiseThen(heroes));
+    //*/
   }
 
   constructor(

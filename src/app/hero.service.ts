@@ -32,6 +32,29 @@ export class HeroService {
     return apiUrl? apiUrl.value : 'api/error';
   }
 
+  /** Promise 테스트용 코드  */
+  getHeroesForPromise(): Promise<Hero[]>{
+    const url = `${this.heroesUrl('heroes')}`;
+    return this.http.get(url)
+      .toPromise()
+      .then(
+        //* component측에서 데이터를 조작할꺼면 그냥 넘긴 후 (비추천!!)
+        //  this.heroService.getHeroesForPromise()
+        //    .then(heroes => this.heroes = this.heroService.getHeroesForPromiseThen(heroes));
+        heroes => {
+          //데이터 조작 후 return함.
+          return this.getHeroesForPromiseThen(heroes);
+        }
+        //*/
+        );
+  }
+
+  /** Promise 테스트용 코드 */
+  getHeroesForPromiseThen(heroes:any):Hero[]{
+    heroes.push({id:100, name:'ks lee (then)'});
+    return heroes;
+  }
+
   getHeroes(): Observable<Hero[]> {
     return this.http.get<Hero[]>(this.heroesUrl('heroes'))
       .pipe(
@@ -51,10 +74,19 @@ export class HeroService {
     const url = `${this.heroesUrl('heroes')}/${id}`;
     return this.http.get(url,{})
       .toPromise()
-      .then();
+      .then(
+        //* component측에서 데이터를 조작할꺼면 그냥 넘긴 후 (비추천!!)
+        //  this.heroService.getHeroForPromise(id)
+        //    .then(hero => this.hero = this.heroService.getHeroForPromiseThen(hero));
+        hero => {
+          return this.getHeroForPromiseThen(hero);
+        }
+        //*/
+      );
   }
 
-  getHeroForPromiseThen(hero:Hero): Hero {
+  /** Promise 테스트용 데이터 조작코드 */
+  getHeroForPromiseThen(hero:any): Hero {
     hero.name += " for promise then";
     return hero;
   }

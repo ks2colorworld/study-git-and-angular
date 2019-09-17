@@ -28,14 +28,21 @@ export class HeroDetailForRouterComponent implements OnInit {
       return;
     }
 
-    //promise 테스트 코드
+    //* service 에서 데이터 조작할 경우(기본)
+    this.heroService.getHeroForPromise(id)
+      .then(hero => this.hero = hero);
+    //*/
+
+    /* component 에서 데이터 조작할 경우
     this.heroService.getHeroForPromise(id)
       .then(hero => {
         this.hero = this.heroService.getHeroForPromiseThen(hero);
       });
+    //*/
   }
 
-  /* 사용안함.
+  /* 사용안함. << 기존에는 데이터 조작 함수를 component 단에서 구현함 > service로 옮김.
+  // 추가 조작이 필요한 경우 재활용이 필요한 경우에만 별도 함수 작성함. (코드 읽기 복잡해짐.)
   afterGetHero(hero:Hero):void{
     this.hero = hero;
     if(environment.detailMessage)
